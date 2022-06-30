@@ -114,23 +114,27 @@ def predict_paddle():
 
     # Ensure an image was properly uploaded to our endpoint.
     if flask.request.method == 'POST':
-        adata = flask.request.json
-        if adata:
-            # Read the image in PIL format
-            img_data = adata['image']
-            if isinstance(img_data,str):
-                image = base64.b64decode(img_data)
+        try:
+            adata = flask.request.json
+            if adata:
+                # Read the image in PIL format
+                img_data = adata['image']
+                if isinstance(img_data,str):
+                    image = base64.b64decode(img_data)
+                    image = Image.open(io.BytesIO(image))
+            elif flask.request.files.get("image"):
+                img_data = flask.request.files["image"]
+                image = img_data.read()
                 print(type(image))
                 image = Image.open(io.BytesIO(image))
-        elif flask.request.files.get("image"):
-            img_data = flask.request.files["image"]
-            image = img_data.read()
-            print(type(image))
-            image = Image.open(io.BytesIO(image))
-            # Preprocess the image and prepare it for classification.
-        data["predict"] = predict_img(image)
-        # Indicate that the request was a success.
-        data["success"] = True
+                # Preprocess the image and prepare it for classification.
+            data["predict"] = predict_img(image)
+            # Indicate that the request was a success.
+            data["success"] = True
+        except Exception as e:
+            data['success'] = False
+            data['message'] = str(e)
+
 
     # Return the data dictionary as a JSON response.
     return flask.jsonify(data)
