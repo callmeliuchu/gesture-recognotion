@@ -6,25 +6,32 @@
 
 import requests
 import argparse
+import base64
 
 # Initialize the PyTorch REST API endpoint URL.
-PyTorch_REST_API_URL = 'http://127.0.0.1:5032/predict'
+PyTorch_REST_API_URL = 'http://localhost:5032/paddle/predict'
 
 
-def predict_result(image_path):
+def predict_result(image_path,use_base64=True):
     # Initialize image path
     image = open(image_path, 'rb').read()
-    payload = {'image': image}
+    if use_base64:
+        base64_data = base64.b64encode(image)
+        base64_str = str(base64_data, 'utf-8')
+        payload = {'image': base64_str}
+        r = requests.post(PyTorch_REST_API_URL, json=payload).json()
+        print(r)
+    else:
+        payload = {'image': image}
+        r = requests.post(PyTorch_REST_API_URL, files=payload).json()
 
     # Submit the request.
-    r = requests.post(PyTorch_REST_API_URL, files=payload).json()
+
 
     # Ensure the request was successful.
     if r['success']:
+        print(r)
         # Loop over the predictions and display them.
-        for (i, result) in enumerate(r['predictions']):
-            print('{}. {}: {:.4f}'.format(i + 1, result['label'],
-                                          result['probability']))
     # Otherwise, the request failed.
     else:
         print('Request failed')
@@ -33,6 +40,5 @@ def predict_result(image_path):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Classification demo')
     parser.add_argument('--file', type=str, help='test image file')
-
     args = parser.parse_args()
     predict_result(args.file)
