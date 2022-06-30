@@ -33,12 +33,13 @@ def handle_imgae(img):
 
 # 构建预测动态图过程
 
-
+dir_path = os.path.dirname(__file__)
 def predict_img(img):
     global model1
     model1 = MyLeNet()  # 模型实例化
     with fluid.dygraph.guard():
-        model_dict, _ = fluid.load_dygraph('/Users/liuchu/gesture-recognition/model/paddle_gesture/MyLeNet')
+
+        model_dict, _ = fluid.load_dygraph(dir_path + '/paddle_gesture/MyLeNet')
         model1.load_dict(model_dict)  # 加载模型参数
         model1.eval()  # 评估模式
         infer_img = handle_imgae(img)
