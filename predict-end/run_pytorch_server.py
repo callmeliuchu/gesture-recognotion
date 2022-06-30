@@ -139,4 +139,4 @@ if __name__ == '__main__':
     print("Loading PyTorch model and Flask starting server ...")
     print("Please wait until server has fully started")
     load_model()
-    app.run(port=5032)
+    app.run(host="0.0.0.0",port=5032)
