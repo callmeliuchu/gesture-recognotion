@@ -35,16 +35,17 @@ def handle_imgae(img):
 
 
 def predict_img(img):
+    global model1
+    model1 = MyLeNet()  # 模型实例化
     with fluid.dygraph.guard():
-        model = MyLeNet()  # 模型实例化
-        model_dict, _ = fluid.load_dygraph('/Users/liuchu/gesture-recognition/model/MyLeNet')
-        model.load_dict(model_dict)  # 加载模型参数
-        model.eval()  # 评估模式
+        model_dict, _ = fluid.load_dygraph('/Users/liuchu/gesture-recognition/model/paddle_gesture/MyLeNet')
+        model1.load_dict(model_dict)  # 加载模型参数
+        model1.eval()  # 评估模式
         infer_img = handle_imgae(img)
         infer_img = np.array(infer_img).astype('float32')
         infer_img = infer_img[np.newaxis, :, :, :]
         infer_img = fluid.dygraph.to_variable(infer_img)
-        result = model(infer_img)
+        result = model1(infer_img)
         # display(Image.open('手势.JPG'))
         ans = int(np.argmax(result.numpy()))
         if ans > 5:
