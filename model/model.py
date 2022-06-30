@@ -1,13 +1,4 @@
-import os
-import time
-import random
-import numpy as np
-from PIL import Image
-import matplotlib.pyplot as plt
-import paddle
 import paddle.fluid as fluid
-import paddle.fluid.layers as layers
-from multiprocessing import cpu_count
 from paddle.fluid.dygraph import Pool2D, Conv2D
 from paddle.fluid.dygraph import Linear
 
